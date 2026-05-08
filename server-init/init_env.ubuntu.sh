@@ -99,6 +99,19 @@ else
   warn "fd 安装失败，跳过"
 fi
 
+# ========================
+# 🚀 fnm（Node.js 版本管理器）
+# ========================
+if [ ! -d "$HOME/.fnm" ]; then
+  log "安装 fnm..."
+  curl -fsSL https://fnm.vercel.app/install | bash
+else
+  log "fnm 已存在，跳过"
+fi
+
+append_once "fnm_for_node" 'eval "$(fnm env --use-on-cd)"' ~/.bashrc
+append_once "fnm_for_node" 'eval "$(fnm env --use-on-cd)"' ~/.zshrc
+
 # 确保 ~/.local/bin 在 PATH 中
 mkdir -p ~/.local/bin
 append_once "LOCAL_BIN_PATH" \
