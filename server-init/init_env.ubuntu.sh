@@ -79,7 +79,7 @@ fi
 # ⚡ Shell 增强工具
 # ========================
 log "安装 shell 增强工具..."
-sudo apt-get install -y zsh fzf ripgrep
+sudo apt-get install -y zsh fzf ripgrep autojump
 
 # bat：Ubuntu 20.04 叫 batcat，22.04+ 叫 bat
 if sudo apt-get install -y bat 2>/dev/null; then
@@ -192,6 +192,12 @@ FZF_CMP="/usr/share/doc/fzf/examples/completion.zsh"
 [ -f "$FZF_CMP" ] && append_once "completion.zsh"   "source $FZF_CMP" ~/.zshrc
 
 # ========================
+# ⚡ autojump 配置
+# ========================
+append_once "autojump.bash" '[[ -s $HOME/.local/share/autojump/autojump.bash ]] && source $HOME/.local/share/autojump/autojump.bash' ~/.bashrc
+append_once "autojump.zsh"  '[[ -s $HOME/.local/share/autojump/autojump.zsh ]]  && source $HOME/.local/share/autojump/autojump.zsh'  ~/.zshrc
+
+# ========================
 # 🧹 清理
 # ========================
 sudo apt-get autoremove -y
@@ -210,4 +216,5 @@ echo "  - 网络排查工具（net-tools / dnsutils / telnet）"
 echo "  - 高级命令行体验（zsh-autosuggestions + zsh-syntax-highlighting + fzf）"
 echo "  - 现代 CLI 工具（bat / fd / ripgrep）"
 echo "  - Oh My Zsh cloud 主题"
+echo "  - autojump（目录快速跳转）"
 echo ""
