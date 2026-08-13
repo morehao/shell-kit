@@ -2,7 +2,7 @@
 
 ## 概述
 
-在 `server-init/deploy_mihomo.sh` 创建独立的 Mihomo 部署脚本，支持通过命令行参数指定订阅地址并自动完成部署。
+在 `setup/deploy/deploy_mihomo.sh` 创建独立的 Mihomo 部署脚本，支持通过命令行参数指定订阅地址并自动完成部署。
 
 ## 目标
 
@@ -54,7 +54,7 @@
 ## 文件结构
 
 ```
-server-init/
+setup/deploy/
 └── deploy_mihomo.sh    # 部署脚本（可执行）
 ```
 

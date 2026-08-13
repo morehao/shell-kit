@@ -1,8 +1,9 @@
-# Server Init
+# Bootstrap
 
-服务器环境初始化脚本集合。
+服务器环境初始化脚本集合。（服务部署脚本见 `../deploy`。）
 
 ## 脚本列表
+
 
 | 脚本 | 说明 | 适用系统 |
 |------|------|----------|
@@ -11,7 +12,7 @@
 ## 使用方法
 
 ```bash
-cd server-init
+cd setup/bootstrap
 chmod +x init_env.ubuntu.sh
 ./init_env.ubuntu.sh
 ```
