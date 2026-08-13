@@ -1,0 +1,6 @@
+# tooling / superpowers dirs
+superpowers/
+docs/superpowers/
+**/superpowers/
+.opencode/
+.superpowers/
