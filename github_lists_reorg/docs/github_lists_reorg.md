@@ -27,7 +27,7 @@
 
 ## 交付物与脚本
 
-位于 `/Users/morehao/Documents/practice/shell/shell-kit/github_lists_reorg/`：
+位于 `/Users/morehao/Documents/practice/shell/scripts-kit/github_lists_reorg/`：
 
 | 文件 | 作用 |
 | --- | --- |
