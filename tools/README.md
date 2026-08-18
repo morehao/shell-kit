@@ -17,6 +17,8 @@ macOS 本地开发环境维护工具脚本集合。
 | 脚本 | 说明 | 适用系统 |
 |------|------|----------|
 | `cleanup/cleanup-opencode.sh` | 清理 opencode 数据库旧会话数据并回收空间 | macOS / Linux |
+| `cleanup/mac_cleanup.sh` | 清理缓存/日志/临时文件/Time Machine 快照/大体积开发缓存等，支持 `--dry-run` 预览 | macOS |
+| `cleanup/manual_cleanup.md` | 手动清理清单（微信/企业微信/OrbStack/浏览器等含用户数据的应用内清理指引） | macOS |
 
 ## 清理 opencode 数据（cleanup/cleanup-opencode.sh）
 
@@ -99,3 +101,73 @@ sqlite3 ~/opencode-backup/opencode.db "PRAGMA integrity_check;"   # 应返回 ok
 
 - 备份文件默认写在 `$HOME`，建议清理完成后移动到独立存储或移入备份归档
 - 若使用定时清理，请确保已存在有效的近期备份
+
+## 清理 Mac 磁盘空间（cleanup/mac_cleanup.sh）
+
+macOS 磁盘空间清理脚本，覆盖缓存、日志、临时文件、Time Machine 本地快照、废纸篓、开发者缓存，
+以及通常占空间最大的大体积项目。
+
+### 特性
+
+- **`--dry-run` 预览**：默认先看再删，不实际删除任何内容
+- **按过期时间过滤**：缓存/日志/临时文件只清理 `-mtime` 过期的内容，不误伤运行中进程正在使用的文件
+- **数据类仅提示不删**：iOS 设备备份属用户数据，只显示大小与路径，不自动删除
+- **大小检测**：每项清理前先打印当前占用，便于对比收益
+
+### 用法
+
+> 以下命令在仓库根目录运行。
+
+```bash
+chmod +x tools/cleanup/mac_cleanup.sh
+
+# 先预览将清理什么（不删除）
+./tools/cleanup/mac_cleanup.sh --dry-run
+
+# 确认后实际清理
+./tools/cleanup/mac_cleanup.sh
+```
+
+### 清理项目
+
+| 步骤 | 项目 | 处理 |
+|------|------|------|
+| 1 | 用户缓存 `~/Library/Caches` | 删 1 天前未改动内容 |
+| 2 | 用户日志 `~/Library/Logs` | 删 7 天前旧日志 |
+| 3 | `/tmp` 临时目录 | 删 1 天前内容 |
+| 4 | `/var/folders` 临时/缓存容器 | 删 7 天前过期缓存 |
+| 5 | Time Machine 本地快照 | `tmutil thinlocalsnapshots` |
+| 6 | 废纸篓 `~/.Trash` | 清空 |
+| 7 | 开发者缓存（Xcode DerivedData、npm） | 删除 |
+| 8 | 大体积项目（见下表） | 见下 |
+| 9 | 语言工具链/包管理器缓存（安全可再生） | 见下 |
+
+**第 8 步 大体积项目：**
+
+| 项目 | 处理 |
+|------|------|
+| iOS 设备备份 | 仅提示大小与路径，不自动删除 |
+| 旧 iOS 固件 (ipsw) | 自动删除 |
+| Homebrew 缓存 | `brew cleanup --prune=all` |
+| CocoaPods 缓存 | 自动删除 |
+| Gradle 缓存 | 自动删除 |
+| Docker | `docker system prune -a --force` |
+| Xcode iOS DeviceSupport | 自动删除 |
+| 不可用旧模拟器 | `xcrun simctl delete unavailable` |
+
+**第 9 步 安全可再生缓存（语言工具链/包管理器）：**
+
+| 项目 | 处理 |
+|------|------|
+| Go 缓存（go-build / goimports / gopls / golangci-lint） | 自动删除 |
+| pnpm store | `pnpm store prune`（只回收未引用包） |
+| npm cache / npx 历史安装 | `npm cache clean --force` |
+| uv / puppeteer / node / codex / opencode 缓存 | 自动删除 |
+| ms-playwright / pip / node-gyp / electron 缓存 | 自动删除 |
+
+### 安全说明
+
+- 涉及 `sudo` 的步骤（`/tmp`、`/var/folders`、Time Machine）会在开头 `sudo -v` 预取权限，失败会明确告警并跳过。
+- 除 iOS 备份外，其余删除项均为**可再生缓存/构建产物**，删除后下次会自动重建或重新下载。
+- 请在首次运行时先用 `--dry-run` 预览，确认无误后再实际执行。
+- 涉及用户数据的应用（微信/企业微信/OrbStack/浏览器等）**不自动删除**，请参考 [`cleanup/manual_cleanup.md`](./cleanup/manual_cleanup.md) 在应用内手动清理。
